@@ -30,6 +30,7 @@ let best = Number(localStorage.getItem(bestStorageKey) ?? 0);
 let gameOver = false;
 let wrapWalls = false;
 let lastTick = 0;
+let shakeTimeout = null;
 bestEl.textContent = String(best);
 function setWrapToggleUi() {
     wrapToggleEl.textContent = `Wrap: ${wrapWalls ? "On" : "Off"}`;
@@ -87,6 +88,18 @@ function applyWrap(point) {
 function setDirection(next) {
     nextDirection = next;
 }
+function triggerShake() {
+    canvas.classList.remove("shake");
+    void canvas.offsetWidth;
+    canvas.classList.add("shake");
+    if (shakeTimeout !== null) {
+        window.clearTimeout(shakeTimeout);
+    }
+    shakeTimeout = window.setTimeout(() => {
+        canvas.classList.remove("shake");
+        shakeTimeout = null;
+    }, 180);
+}
 function step() {
     if (gameOver) {
         return;
@@ -116,6 +129,7 @@ function step() {
         scoreEl.textContent = String(score);
         speedEl.textContent = `${currentSpeedMultiplier().toFixed(2)}x`;
         updateBest();
+        triggerShake();
         placeFood();
     }
     else {

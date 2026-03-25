@@ -37,6 +37,7 @@ let best = Number(localStorage.getItem(bestStorageKey) ?? 0);
 let gameOver = false;
 let wrapWalls = false;
 let lastTick = 0;
+let shakeTimeout: number | null = null;
 
 bestEl.textContent = String(best);
 
@@ -106,6 +107,21 @@ function setDirection(next: Direction): void {
   nextDirection = next;
 }
 
+function triggerShake(): void {
+  canvas.classList.remove("shake");
+  void canvas.offsetWidth;
+  canvas.classList.add("shake");
+
+  if (shakeTimeout !== null) {
+    window.clearTimeout(shakeTimeout);
+  }
+
+  shakeTimeout = window.setTimeout(() => {
+    canvas.classList.remove("shake");
+    shakeTimeout = null;
+  }, 180);
+}
+
 function step(): void {
   if (gameOver) {
     return;
@@ -142,6 +158,7 @@ function step(): void {
     scoreEl.textContent = String(score);
     speedEl.textContent = `${currentSpeedMultiplier().toFixed(2)}x`;
     updateBest();
+    triggerShake();
     placeFood();
   } else {
     snake.pop();
