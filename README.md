@@ -6,10 +6,18 @@ A small browser-based Snake game written in TypeScript.
 
 - Arrow keys or WASD controls
 - Mobile-friendly compact touch controls
-- Haptic feedback on supported mobile browsers, with an in-game status note when unavailable
+- Installable PWA with offline support for the core app shell
+- Haptic feedback on supported mobile browsers, with clearer in-game messaging when iPhone/iPad PWAs still lack native Taptic Engine access
 - Optional wrap-around walls mode
 - Persistent best score via localStorage
 - Increasing speed as you eat food
+
+## Install it
+
+- **Desktop Chromium browsers:** use the install button in the address bar.
+- **iPhone/iPad Safari:** use **Share → Add to Home Screen**.
+- **Offline:** once loaded, the app shell is cached so the game can start without a network connection.
+- **Haptics on Apple devices:** installing as a PWA does not unlock native iOS haptics by itself. Full Taptic Engine support still requires a native wrapper such as Capacitor.
 
 ## Run it locally
 
