@@ -41,6 +41,3 @@ The included workflow will build the game and deploy it to GitHub Pages automati
 
 Use the on-screen directional buttons.
 
-## TODO:
-
-- host it on github pages
