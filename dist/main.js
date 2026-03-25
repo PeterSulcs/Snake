@@ -10,6 +10,7 @@ const canvas = requireElement("#game");
 const scoreEl = requireElement("#score");
 const bestEl = requireElement("#best");
 const speedEl = requireElement("#speed");
+const hapticsStatusEl = requireElement("#haptics-status");
 const wrapToggleEl = requireElement("#wrap-toggle");
 const restartButtonEl = requireElement("#restart-button");
 const touchButtons = Array.from(document.querySelectorAll("[data-dir]"));
@@ -38,6 +39,8 @@ const vibrationPatterns = {
     food: 18,
     gameOver: [24, 18, 32],
 };
+const isTouchCapable = (typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches) ||
+    (typeof navigator !== "undefined" && navigator.maxTouchPoints > 0);
 let snake = [];
 let direction = { x: 1, y: 0 };
 let nextDirection = { x: 1, y: 0 };
@@ -48,6 +51,7 @@ let gameOver = false;
 let wrapWalls = false;
 let lastTick = 0;
 let shakeTimeout = null;
+let hapticsSupport = "unknown";
 bestEl.textContent = String(best);
 function setWrapToggleUi() {
     wrapToggleEl.textContent = `Wrap: ${wrapWalls ? "On" : "Off"}`;
@@ -121,15 +125,32 @@ function triggerShake() {
         shakeTimeout = null;
     }, 180);
 }
+function setHapticsStatus(next) {
+    hapticsSupport = next;
+    const supportedAttribute = next === "unknown" ? "maybe" : String(next === "supported");
+    hapticsStatusEl.dataset.supported = supportedAttribute;
+    if (!isTouchCapable) {
+        hapticsStatusEl.textContent = "Haptics: Mostly relevant on phones and tablets.";
+        return;
+    }
+    if (next === "supported") {
+        hapticsStatusEl.textContent = "Haptics: Ready on this device/browser.";
+        return;
+    }
+    if (next === "unsupported") {
+        hapticsStatusEl.textContent = "Haptics: Not available here — gameplay still works without vibration.";
+        return;
+    }
+    hapticsStatusEl.textContent = "Haptics: This browser may ignore vibration unless the device/browser supports it.";
+}
 function triggerHaptic(pattern) {
     if (typeof navigator === "undefined" || typeof navigator.vibrate !== "function") {
-        return;
+        setHapticsStatus("unsupported");
+        return false;
     }
-    if (typeof pattern === "number") {
-        navigator.vibrate(pattern);
-        return;
-    }
-    navigator.vibrate(Array.from(pattern));
+    const didVibrate = typeof pattern === "number" ? navigator.vibrate(pattern) : navigator.vibrate(Array.from(pattern));
+    setHapticsStatus(didVibrate ? "supported" : "unsupported");
+    return didVibrate;
 }
 function step() {
     if (gameOver) {
@@ -286,6 +307,7 @@ for (const button of touchButtons) {
     });
 }
 setWrapToggleUi();
+setHapticsStatus(typeof navigator !== "undefined" && typeof navigator.vibrate === "function" ? "unknown" : "unsupported");
 resetGame();
 render();
 requestAnimationFrame(loop);

@@ -192,6 +192,35 @@ canvas.shake {
   100% { transform: translate(0, 0); }
 }
 
+.status-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.status-pill {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #fff8ff;
+  font-size: 0.92rem;
+  line-height: 1.35;
+}
+
+.status-pill[data-supported="true"] {
+  background: rgba(87, 242, 135, 0.14);
+  border-color: rgba(87, 242, 135, 0.3);
+  color: #dffff0;
+}
+
+.status-pill[data-supported="false"] {
+  background: rgba(255, 138, 61, 0.14);
+  border-color: rgba(255, 138, 61, 0.3);
+  color: #ffe7d6;
+}
+
 .controls {
   color: #f8d8ff;
   line-height: 1.6;
