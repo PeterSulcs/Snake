@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Snake</title>
+    <link rel="stylesheet" href="./src/style.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section class="panel">
+        <div>
+          <h1>Snake</h1>
+          <p class="subtitle">TypeScript edition</p>
+        </div>
+
+        <div class="stats">
+          <div><span>Score</span><strong id="score">0</strong></div>
+          <div><span>Best</span><strong id="best">0</strong></div>
+          <div><span>Speed</span><strong id="speed">1x</strong></div>
+        </div>
+
+        <canvas id="game" width="480" height="480" aria-label="Snake game board"></canvas>
+
+        <div class="controls">
+          <p>Use arrow keys or WASD to move. Press space to restart after game over.</p>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="./dist/main.js"></script>
+  </body>
+</html>
