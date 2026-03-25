@@ -11,6 +11,7 @@ const scoreEl = requireElement("#score");
 const bestEl = requireElement("#best");
 const speedEl = requireElement("#speed");
 const wrapToggleEl = requireElement("#wrap-toggle");
+const restartButtonEl = requireElement("#restart-button");
 const touchButtons = Array.from(document.querySelectorAll("[data-dir]"));
 const maybeCtx = canvas.getContext("2d");
 if (!maybeCtx) {
@@ -65,6 +66,9 @@ function placeFood() {
     }
     food = next;
 }
+function setRestartButtonVisibility(visible) {
+    restartButtonEl.hidden = !visible;
+}
 function resetGame() {
     snake = [
         { x: 5, y: 10 },
@@ -77,6 +81,7 @@ function resetGame() {
     gameOver = false;
     scoreEl.textContent = "0";
     speedEl.textContent = "1x";
+    setRestartButtonVisibility(false);
     placeFood();
 }
 function updateBest() {
@@ -146,6 +151,7 @@ function step() {
     const hitSelf = snake.some((segment) => segment.x === nextHead.x && segment.y === nextHead.y);
     if (hitWall || hitSelf) {
         gameOver = true;
+        setRestartButtonVisibility(true);
         updateBest();
         triggerHaptic(vibrationPatterns.gameOver);
         return;
@@ -254,6 +260,11 @@ document.addEventListener("keydown", (event) => {
 wrapToggleEl.addEventListener("click", () => {
     wrapWalls = !wrapWalls;
     setWrapToggleUi();
+});
+restartButtonEl.addEventListener("click", () => {
+    resetGame();
+    render();
+    triggerHaptic(vibrationPatterns.controlTap);
 });
 const touchMap = {
     up: { x: 0, y: -1 },

@@ -15,6 +15,7 @@ const scoreEl = requireElement<HTMLElement>("#score");
 const bestEl = requireElement<HTMLElement>("#best");
 const speedEl = requireElement<HTMLElement>("#speed");
 const wrapToggleEl = requireElement<HTMLButtonElement>("#wrap-toggle");
+const restartButtonEl = requireElement<HTMLButtonElement>("#restart-button");
 const touchButtons = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-dir]"));
 const maybeCtx = canvas.getContext("2d");
 
@@ -77,6 +78,10 @@ function placeFood(): void {
   food = next;
 }
 
+function setRestartButtonVisibility(visible: boolean): void {
+  restartButtonEl.hidden = !visible;
+}
+
 function resetGame(): void {
   snake = [
     { x: 5, y: 10 },
@@ -89,6 +94,7 @@ function resetGame(): void {
   gameOver = false;
   scoreEl.textContent = "0";
   speedEl.textContent = "1x";
+  setRestartButtonVisibility(false);
   placeFood();
 }
 
@@ -176,6 +182,7 @@ function step(): void {
 
   if (hitWall || hitSelf) {
     gameOver = true;
+    setRestartButtonVisibility(true);
     updateBest();
     triggerHaptic(vibrationPatterns.gameOver);
     return;
@@ -304,6 +311,12 @@ document.addEventListener("keydown", (event) => {
 wrapToggleEl.addEventListener("click", () => {
   wrapWalls = !wrapWalls;
   setWrapToggleUi();
+});
+
+restartButtonEl.addEventListener("click", () => {
+  resetGame();
+  render();
+  triggerHaptic(vibrationPatterns.controlTap);
 });
 
 const touchMap: Record<string, Direction> = {
