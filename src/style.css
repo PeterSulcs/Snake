@@ -218,22 +218,50 @@ canvas.shake {
 
   .panel {
     width: 100%;
-    padding: 18px;
-    gap: 18px;
+    padding: 16px;
+    gap: 14px;
     border-radius: 22px;
+  }
+
+  .sidebar {
+    gap: 14px;
+  }
+
+  .heading-row {
+    gap: 10px;
   }
 
   h1 {
     font-size: 2.6rem;
   }
 
+  .stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .stats div {
+    padding: 12px 14px;
+  }
+
+  .stats strong {
+    font-size: 1.1rem;
+  }
+
+  .controls {
+    max-width: none;
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+
   canvas {
-    width: min(100%, calc(100vh - 320px));
+    width: min(100%, calc(100vh - 360px));
     border-radius: 22px;
   }
 
   .touch-controls {
     display: flex;
     flex-direction: column;
+    order: -1;
+    margin-top: 0;
   }
 }
