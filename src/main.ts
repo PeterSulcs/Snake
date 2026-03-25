@@ -28,15 +28,14 @@ const tileCount = canvas.width / gridSize;
 const baseTickMs = 140;
 const bestStorageKey = "snake-best-score";
 const boardPalette = {
-  background: "#1b1145",
-  tileA: "#261a63",
-  tileB: "#31207a",
-  squiggle: "rgba(255, 255, 255, 0.08)",
-  sparkle: "rgba(255, 255, 255, 0.14)",
-  food: "#ffe45e",
-  foodAccent: "#ff4fbf",
-  overlay: "rgba(27, 17, 69, 0.8)",
-  overlayText: "#fff8ff",
+  background: "#24115e",
+  tileA: "#33207d",
+  tileB: "#442b96",
+  gridGlow: "rgba(255, 255, 255, 0.08)",
+  food: "#fff07a",
+  foodAccent: "#ff5fb2",
+  overlay: "rgba(36, 17, 94, 0.76)",
+  overlayText: "#fffdfd",
 };
 const snakePalette = ["#3cf2ff", "#7c5cff", "#ff4fbf", "#ff8a3d", "#ffe45e", "#57f287"];
 
@@ -200,36 +199,21 @@ function drawSavedByTheBellBackdrop(): void {
   }
 
   ctx.save();
-  ctx.strokeStyle = boardPalette.squiggle;
-  ctx.lineWidth = 4;
-  ctx.lineCap = "round";
+  ctx.strokeStyle = boardPalette.gridGlow;
+  ctx.lineWidth = 1;
 
-  const squiggles = [
-    [24, 82, 92, 48, 148, 92, 212, 56],
-    [288, 40, 334, 80, 390, 28, 442, 66],
-    [42, 372, 110, 326, 156, 394, 228, 340],
-    [272, 398, 328, 350, 388, 420, 444, 374],
-  ];
+  for (let line = 0; line <= tileCount; line += 1) {
+    const offset = line * gridSize;
 
-  for (const [startX, startY, cp1X, cp1Y, cp2X, cp2Y, endX, endY] of squiggles) {
     ctx.beginPath();
-    ctx.moveTo(startX, startY);
-    ctx.bezierCurveTo(cp1X, cp1Y, cp2X, cp2Y, endX, endY);
+    ctx.moveTo(offset, 0);
+    ctx.lineTo(offset, canvas.height);
     ctx.stroke();
-  }
 
-  ctx.fillStyle = boardPalette.sparkle;
-  const sparkles = [
-    { x: 84, y: 150, size: 10 },
-    { x: 398, y: 126, size: 8 },
-    { x: 340, y: 292, size: 10 },
-    { x: 130, y: 434, size: 7 },
-  ];
-
-  for (const sparkle of sparkles) {
     ctx.beginPath();
-    ctx.arc(sparkle.x, sparkle.y, sparkle.size, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.moveTo(0, offset);
+    ctx.lineTo(canvas.width, offset);
+    ctx.stroke();
   }
 
   ctx.restore();
