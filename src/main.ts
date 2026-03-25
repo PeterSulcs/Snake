@@ -27,6 +27,18 @@ const gridSize = 20;
 const tileCount = canvas.width / gridSize;
 const baseTickMs = 140;
 const bestStorageKey = "snake-best-score";
+const boardPalette = {
+  background: "#1b1145",
+  tileA: "#261a63",
+  tileB: "#31207a",
+  squiggle: "rgba(255, 255, 255, 0.08)",
+  sparkle: "rgba(255, 255, 255, 0.14)",
+  food: "#ffe45e",
+  foodAccent: "#ff4fbf",
+  overlay: "rgba(27, 17, 69, 0.8)",
+  overlayText: "#fff8ff",
+};
+const snakePalette = ["#3cf2ff", "#7c5cff", "#ff4fbf", "#ff8a3d", "#ffe45e", "#57f287"];
 
 let snake: Point[] = [];
 let direction: Direction = { x: 1, y: 0 };
@@ -165,8 +177,7 @@ function step(): void {
   }
 }
 
-function drawCell(point: Point, color: string, radius = 5): void {
-  const inset = 2;
+function drawCell(point: Point, color: string, radius = 5, inset = 2): void {
   const x = point.x * gridSize + inset;
   const y = point.y * gridSize + inset;
   const size = gridSize - inset * 2;
@@ -177,29 +188,71 @@ function drawCell(point: Point, color: string, radius = 5): void {
   ctx.fill();
 }
 
-function render(): void {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  ctx.fillStyle = "#0f172a";
+function drawSavedByTheBellBackdrop(): void {
+  ctx.fillStyle = boardPalette.background;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   for (let x = 0; x < tileCount; x += 1) {
     for (let y = 0; y < tileCount; y += 1) {
-      ctx.fillStyle = (x + y) % 2 === 0 ? "#0b1220" : "#101a2f";
+      ctx.fillStyle = (x + y) % 2 === 0 ? boardPalette.tileA : boardPalette.tileB;
       ctx.fillRect(x * gridSize, y * gridSize, gridSize, gridSize);
     }
   }
 
-  drawCell(food, "#f97316", 8);
+  ctx.save();
+  ctx.strokeStyle = boardPalette.squiggle;
+  ctx.lineWidth = 4;
+  ctx.lineCap = "round";
+
+  const squiggles = [
+    [24, 82, 92, 48, 148, 92, 212, 56],
+    [288, 40, 334, 80, 390, 28, 442, 66],
+    [42, 372, 110, 326, 156, 394, 228, 340],
+    [272, 398, 328, 350, 388, 420, 444, 374],
+  ];
+
+  for (const [startX, startY, cp1X, cp1Y, cp2X, cp2Y, endX, endY] of squiggles) {
+    ctx.beginPath();
+    ctx.moveTo(startX, startY);
+    ctx.bezierCurveTo(cp1X, cp1Y, cp2X, cp2Y, endX, endY);
+    ctx.stroke();
+  }
+
+  ctx.fillStyle = boardPalette.sparkle;
+  const sparkles = [
+    { x: 84, y: 150, size: 10 },
+    { x: 398, y: 126, size: 8 },
+    { x: 340, y: 292, size: 10 },
+    { x: 130, y: 434, size: 7 },
+  ];
+
+  for (const sparkle of sparkles) {
+    ctx.beginPath();
+    ctx.arc(sparkle.x, sparkle.y, sparkle.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.restore();
+}
+
+function render(): void {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawSavedByTheBellBackdrop();
+
+  drawCell(food, boardPalette.foodAccent, 10, 4);
+  drawCell(food, boardPalette.food, 999, 6);
 
   snake.forEach((segment, index) => {
-    drawCell(segment, index === 0 ? "#22c55e" : "#16a34a", 6);
+    const color = index === 0 ? "#ffffff" : snakePalette[(index - 1) % snakePalette.length];
+    const accent = index === 0 ? "#ff4fbf" : color;
+    drawCell(segment, accent, 8, 2);
+    drawCell(segment, color, 7, 4);
   });
 
   if (gameOver) {
-    ctx.fillStyle = "rgba(15, 23, 42, 0.78)";
+    ctx.fillStyle = boardPalette.overlay;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#f8fafc";
+    ctx.fillStyle = boardPalette.overlayText;
     ctx.textAlign = "center";
     ctx.font = "bold 38px Inter, sans-serif";
     ctx.fillText("Game Over", canvas.width / 2, canvas.height / 2 - 10);
