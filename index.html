@@ -9,9 +9,12 @@
   <body>
     <main class="app">
       <section class="panel">
-        <div>
-          <h1>Snake</h1>
-          <p class="subtitle">TypeScript edition</p>
+        <div class="heading-row">
+          <div>
+            <h1>Snake</h1>
+            <p class="subtitle">TypeScript edition</p>
+          </div>
+          <button id="wrap-toggle" class="toggle-button" type="button" aria-pressed="false">Wrap: Off</button>
         </div>
 
         <div class="stats">
@@ -24,6 +27,15 @@
 
         <div class="controls">
           <p>Use arrow keys or WASD to move. Press space to restart after game over.</p>
+        </div>
+
+        <div class="touch-controls" aria-label="Touch controls">
+          <div></div>
+          <button data-dir="up" type="button">▲</button>
+          <div></div>
+          <button data-dir="left" type="button">◀</button>
+          <button data-dir="down" type="button">▼</button>
+          <button data-dir="right" type="button">▶</button>
         </div>
       </section>
     </main>

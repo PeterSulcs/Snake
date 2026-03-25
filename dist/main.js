@@ -10,6 +10,8 @@ const canvas = requireElement("#game");
 const scoreEl = requireElement("#score");
 const bestEl = requireElement("#best");
 const speedEl = requireElement("#speed");
+const wrapToggleEl = requireElement("#wrap-toggle");
+const touchButtons = Array.from(document.querySelectorAll("[data-dir]"));
 const maybeCtx = canvas.getContext("2d");
 if (!maybeCtx) {
     throw new Error("2D canvas context unavailable.");
@@ -26,8 +28,13 @@ let food = { x: 10, y: 10 };
 let score = 0;
 let best = Number(localStorage.getItem(bestStorageKey) ?? 0);
 let gameOver = false;
+let wrapWalls = false;
 let lastTick = 0;
 bestEl.textContent = String(best);
+function setWrapToggleUi() {
+    wrapToggleEl.textContent = `Wrap: ${wrapWalls ? "On" : "Off"}`;
+    wrapToggleEl.setAttribute("aria-pressed", String(wrapWalls));
+}
 function randomCell() {
     return {
         x: Math.floor(Math.random() * tileCount),
@@ -71,6 +78,15 @@ function tickInterval() {
 function isOpposite(a, b) {
     return a.x === -b.x && a.y === -b.y;
 }
+function applyWrap(point) {
+    return {
+        x: (point.x + tileCount) % tileCount,
+        y: (point.y + tileCount) % tileCount,
+    };
+}
+function setDirection(next) {
+    nextDirection = next;
+}
 function step() {
     if (gameOver) {
         return;
@@ -79,11 +95,15 @@ function step() {
         direction = nextDirection;
     }
     const head = snake[0];
-    const nextHead = {
+    let nextHead = {
         x: head.x + direction.x,
         y: head.y + direction.y,
     };
-    const hitWall = nextHead.x < 0 || nextHead.x >= tileCount || nextHead.y < 0 || nextHead.y >= tileCount;
+    const crossedWall = nextHead.x < 0 || nextHead.x >= tileCount || nextHead.y < 0 || nextHead.y >= tileCount;
+    if (wrapWalls) {
+        nextHead = applyWrap(nextHead);
+    }
+    const hitWall = crossedWall && !wrapWalls;
     const hitSelf = snake.some((segment) => segment.x === nextHead.x && segment.y === nextHead.y);
     if (hitWall || hitSelf) {
         gameOver = true;
@@ -165,9 +185,32 @@ document.addEventListener("keydown", (event) => {
     const selected = nextMap[key];
     if (selected) {
         event.preventDefault();
-        nextDirection = selected;
+        setDirection(selected);
     }
 });
+wrapToggleEl.addEventListener("click", () => {
+    wrapWalls = !wrapWalls;
+    setWrapToggleUi();
+});
+const touchMap = {
+    up: { x: 0, y: -1 },
+    down: { x: 0, y: 1 },
+    left: { x: -1, y: 0 },
+    right: { x: 1, y: 0 },
+};
+for (const button of touchButtons) {
+    button.addEventListener("click", () => {
+        const dir = button.dataset.dir;
+        if (!dir) {
+            return;
+        }
+        const selected = touchMap[dir];
+        if (selected) {
+            setDirection(selected);
+        }
+    });
+}
+setWrapToggleUi();
 resetGame();
 render();
 requestAnimationFrame(loop);
