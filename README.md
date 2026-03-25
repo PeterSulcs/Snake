@@ -6,7 +6,7 @@ A small browser-based Snake game written in TypeScript.
 
 - Arrow keys or WASD controls
 - Mobile-friendly compact touch controls
-- Haptic feedback on supported mobile browsers, with an in-game status note when unavailable
+- Haptic feedback on supported mobile browsers, with clearer in-game messaging when iPhone/iPad web haptics are limited or unavailable
 - Optional wrap-around walls mode
 - Persistent best score via localStorage
 - Increasing speed as you eat food
