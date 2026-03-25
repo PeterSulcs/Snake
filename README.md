@@ -29,6 +29,8 @@ Then open <http://localhost:4173>.
 
 The included workflow will build the game and deploy it to GitHub Pages automatically.
 
+Live site: <https://petersulcs.github.io/Snake/>
+
 ## Controls
 
 ### Desktop
