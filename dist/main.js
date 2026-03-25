@@ -41,6 +41,11 @@ const vibrationPatterns = {
 };
 const isTouchCapable = (typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches) ||
     (typeof navigator !== "undefined" && navigator.maxTouchPoints > 0);
+const userAgent = typeof navigator === "undefined" ? "" : navigator.userAgent;
+const isAppleMobileDevice = /iPhone|iPad|iPod/i.test(userAgent) ||
+    (typeof navigator !== "undefined" && navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+const isStandaloneDisplayMode = (typeof window !== "undefined" && window.matchMedia("(display-mode: standalone)").matches) ||
+    (typeof navigator !== "undefined" && "standalone" in navigator && Boolean(navigator.standalone));
 let snake = [];
 let direction = { x: 1, y: 0 };
 let nextDirection = { x: 1, y: 0 };
@@ -127,7 +132,7 @@ function triggerShake() {
 }
 function setHapticsStatus(next) {
     hapticsSupport = next;
-    const supportedAttribute = next === "unknown" ? "maybe" : String(next === "supported");
+    const supportedAttribute = next === "supported" ? "true" : next === "unsupported" ? "false" : "maybe";
     hapticsStatusEl.dataset.supported = supportedAttribute;
     if (!isTouchCapable) {
         hapticsStatusEl.textContent = "Haptics: Mostly relevant on phones and tablets.";
@@ -135,6 +140,12 @@ function setHapticsStatus(next) {
     }
     if (next === "supported") {
         hapticsStatusEl.textContent = "Haptics: Ready on this device/browser.";
+        return;
+    }
+    if (next === "limited") {
+        hapticsStatusEl.textContent = isStandaloneDisplayMode
+            ? "Haptics: iPhone/iPad home screen apps still have limited vibration support, so this install may stay silent."
+            : "Haptics: iPhone/iPad browsers still expose vibration inconsistently, so this device may stay silent.";
         return;
     }
     if (next === "unsupported") {
@@ -145,11 +156,11 @@ function setHapticsStatus(next) {
 }
 function triggerHaptic(pattern) {
     if (typeof navigator === "undefined" || typeof navigator.vibrate !== "function") {
-        setHapticsStatus("unsupported");
+        setHapticsStatus(isAppleMobileDevice ? "limited" : "unsupported");
         return false;
     }
     const didVibrate = typeof pattern === "number" ? navigator.vibrate(pattern) : navigator.vibrate(Array.from(pattern));
-    setHapticsStatus(didVibrate ? "supported" : "unsupported");
+    setHapticsStatus(didVibrate ? "supported" : isAppleMobileDevice ? "limited" : "unsupported");
     return didVibrate;
 }
 function step() {
@@ -307,7 +318,11 @@ for (const button of touchButtons) {
     });
 }
 setWrapToggleUi();
-setHapticsStatus(typeof navigator !== "undefined" && typeof navigator.vibrate === "function" ? "unknown" : "unsupported");
+setHapticsStatus(typeof navigator !== "undefined" && typeof navigator.vibrate === "function"
+    ? "unknown"
+    : isAppleMobileDevice
+        ? "limited"
+        : "unsupported");
 resetGame();
 render();
 requestAnimationFrame(loop);
