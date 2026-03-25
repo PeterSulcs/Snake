@@ -5,7 +5,7 @@ A small browser-based Snake game written in TypeScript.
 ## Features
 
 - Arrow keys or WASD controls
-- Mobile-friendly touch controls
+- Mobile-friendly compact touch controls
 - Optional wrap-around walls mode
 - Persistent best score via localStorage
 - Increasing speed as you eat food

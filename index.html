@@ -9,33 +9,37 @@
   <body>
     <main class="app">
       <section class="panel">
-        <div class="heading-row">
-          <div>
-            <h1>Snake</h1>
-            <p class="subtitle">TypeScript edition</p>
+        <aside class="sidebar">
+          <div class="heading-row">
+            <div>
+              <h1>Snake</h1>
+              <p class="subtitle">TypeScript edition</p>
+            </div>
+            <button id="wrap-toggle" class="toggle-button" type="button" aria-pressed="false">Wrap: Off</button>
           </div>
-          <button id="wrap-toggle" class="toggle-button" type="button" aria-pressed="false">Wrap: Off</button>
-        </div>
 
-        <div class="stats">
-          <div><span>Score</span><strong id="score">0</strong></div>
-          <div><span>Best</span><strong id="best">0</strong></div>
-          <div><span>Speed</span><strong id="speed">1x</strong></div>
-        </div>
+          <div class="stats">
+            <div><span>Score</span><strong id="score">0</strong></div>
+            <div><span>Best</span><strong id="best">0</strong></div>
+            <div><span>Speed</span><strong id="speed">1x</strong></div>
+          </div>
 
-        <canvas id="game" width="480" height="480" aria-label="Snake game board"></canvas>
+          <div class="controls">
+            <p>Use arrow keys or WASD to move. Press space to restart after game over.</p>
+          </div>
 
-        <div class="controls">
-          <p>Use arrow keys or WASD to move. Press space to restart after game over.</p>
-        </div>
+          <div class="touch-controls" aria-label="Touch controls">
+            <button data-dir="up" type="button" aria-label="Move up">↑</button>
+            <div class="touch-row">
+              <button data-dir="left" type="button" aria-label="Move left">←</button>
+              <button data-dir="down" type="button" aria-label="Move down">↓</button>
+              <button data-dir="right" type="button" aria-label="Move right">→</button>
+            </div>
+          </div>
+        </aside>
 
-        <div class="touch-controls" aria-label="Touch controls">
-          <div></div>
-          <button data-dir="up" type="button">▲</button>
-          <div></div>
-          <button data-dir="left" type="button">◀</button>
-          <button data-dir="down" type="button">▼</button>
-          <button data-dir="right" type="button">▶</button>
+        <div class="board-shell">
+          <canvas id="game" width="480" height="480" aria-label="Snake game board"></canvas>
         </div>
       </section>
     </main>
