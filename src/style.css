@@ -135,6 +135,7 @@ h1 {
   display: grid;
   place-items: center;
   min-height: 0;
+  position: relative;
 }
 
 canvas {
@@ -152,6 +153,34 @@ canvas {
 
 canvas.shake {
   animation: snake-shake 180ms linear;
+}
+
+.restart-button {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + 72px);
+  transform: translateX(-50%);
+  min-width: 148px;
+  min-height: 52px;
+  padding: 12px 20px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #ffe45e, #ff8a3d);
+  color: #16092f;
+  font: inherit;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.34);
+  z-index: 2;
+}
+
+.restart-button:active {
+  transform: translateX(-50%) scale(0.97);
+}
+
+.restart-button[hidden] {
+  display: none;
 }
 
 @keyframes snake-shake {
@@ -277,5 +306,11 @@ canvas.shake {
     order: -1;
     margin-top: 0;
     align-self: center;
+  }
+
+  .restart-button {
+    top: calc(50% + 60px);
+    min-width: 156px;
+    min-height: 56px;
   }
 }
