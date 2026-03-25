@@ -32,6 +32,11 @@ const boardPalette = {
     overlayText: "#fffdfd",
 };
 const snakePalette = ["#3cf2ff", "#7c5cff", "#ff4fbf", "#ff8a3d", "#ffe45e", "#57f287"];
+const vibrationPatterns = {
+    controlTap: 12,
+    food: 18,
+    gameOver: [24, 18, 32],
+};
 let snake = [];
 let direction = { x: 1, y: 0 };
 let nextDirection = { x: 1, y: 0 };
@@ -111,6 +116,16 @@ function triggerShake() {
         shakeTimeout = null;
     }, 180);
 }
+function triggerHaptic(pattern) {
+    if (typeof navigator === "undefined" || typeof navigator.vibrate !== "function") {
+        return;
+    }
+    if (typeof pattern === "number") {
+        navigator.vibrate(pattern);
+        return;
+    }
+    navigator.vibrate(Array.from(pattern));
+}
 function step() {
     if (gameOver) {
         return;
@@ -132,6 +147,7 @@ function step() {
     if (hitWall || hitSelf) {
         gameOver = true;
         updateBest();
+        triggerHaptic(vibrationPatterns.gameOver);
         return;
     }
     snake.unshift(nextHead);
@@ -141,6 +157,7 @@ function step() {
         speedEl.textContent = `${currentSpeedMultiplier().toFixed(2)}x`;
         updateBest();
         triggerShake();
+        triggerHaptic(vibrationPatterns.food);
         placeFood();
     }
     else {
@@ -253,6 +270,7 @@ for (const button of touchButtons) {
         const selected = touchMap[dir];
         if (selected) {
             setDirection(selected);
+            triggerHaptic(vibrationPatterns.controlTap);
         }
     });
 }

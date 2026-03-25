@@ -38,6 +38,11 @@ const boardPalette = {
   overlayText: "#fffdfd",
 };
 const snakePalette = ["#3cf2ff", "#7c5cff", "#ff4fbf", "#ff8a3d", "#ffe45e", "#57f287"];
+const vibrationPatterns = {
+  controlTap: 12,
+  food: 18,
+  gameOver: [24, 18, 32],
+} as const;
 
 let snake: Point[] = [];
 let direction: Direction = { x: 1, y: 0 };
@@ -133,6 +138,19 @@ function triggerShake(): void {
   }, 180);
 }
 
+function triggerHaptic(pattern: number | readonly number[]): void {
+  if (typeof navigator === "undefined" || typeof navigator.vibrate !== "function") {
+    return;
+  }
+
+  if (typeof pattern === "number") {
+    navigator.vibrate(pattern);
+    return;
+  }
+
+  navigator.vibrate(Array.from(pattern));
+}
+
 function step(): void {
   if (gameOver) {
     return;
@@ -159,6 +177,7 @@ function step(): void {
   if (hitWall || hitSelf) {
     gameOver = true;
     updateBest();
+    triggerHaptic(vibrationPatterns.gameOver);
     return;
   }
 
@@ -170,6 +189,7 @@ function step(): void {
     speedEl.textContent = `${currentSpeedMultiplier().toFixed(2)}x`;
     updateBest();
     triggerShake();
+    triggerHaptic(vibrationPatterns.food);
     placeFood();
   } else {
     snake.pop();
@@ -303,6 +323,7 @@ for (const button of touchButtons) {
     const selected = touchMap[dir];
     if (selected) {
       setDirection(selected);
+      triggerHaptic(vibrationPatterns.controlTap);
     }
   });
 }
