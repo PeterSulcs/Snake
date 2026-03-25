@@ -31,3 +31,7 @@ Then open <http://localhost:4173>.
 ### Mobile
 
 Use the on-screen directional buttons.
+
+## TODO:
+
+- host it on github pages
